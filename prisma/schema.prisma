@@ -8,6 +8,14 @@ datasource db {
   relationMode = "prisma"
 }
 
+model Election {
+  id         String      @id @default(cuid())
+  title      String
+  students   Student[]
+  teachers   Teacher[]
+  candidates Candidate[]
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -58,12 +66,12 @@ model VerificationToken {
 }
 
 model Teacher {
-  id       String @id @unique @default(uuid())
-  email    String @unique
+  email    String @id @unique
   name     String
   password String
 
-  votes TeacherVote[]
+  votes     TeacherVote[]
+  elections Election[]
 
   @@index([email])
 }
@@ -77,6 +85,7 @@ model Student {
   rollNo    Int
   candidate Candidate?
   votes     Vote[]
+  Elections Election[]
 
   @@index([std, section, rollNo])
 }
@@ -88,30 +97,31 @@ model Candidate {
   ministry     String
   studentVotes Vote[]
   teacherVotes TeacherVote[]
+  elections    Election[]
 
   @@index([ministry])
 }
 
 model Vote {
-  id              String    @id @unique @default(uuid())
-  to              Candidate @relation(fields: [candidateId], references: [id])
-  candidateId     String
-  by              Student   @relation(fields: [voterAdmissonNo], references: [id])
-  voterAdmissonNo String
+  id          String    @id @unique @default(uuid())
+  to          Candidate @relation(fields: [candidateId], references: [id])
+  candidateId String
+  by          Student   @relation(fields: [voterId], references: [id])
+  voterId     String
 
-  @@unique([candidateId, voterAdmissonNo])
+  @@unique([candidateId, voterId])
   @@index([candidateId])
-  @@index([voterAdmissonNo])
+  @@index([voterId])
 }
 
 model TeacherVote {
   id          String    @id @unique @default(uuid())
   to          Candidate @relation(fields: [candidateId], references: [id])
   candidateId String
-  by          Teacher   @relation(fields: [voterId], references: [id])
-  voterId     String
+  by          Teacher   @relation(fields: [voterEmail], references: [email])
+  voterEmail  String
 
-  @@index([voterId])
+  @@index([voterEmail])
   @@index([candidateId])
 }
 
