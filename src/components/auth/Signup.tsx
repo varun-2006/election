@@ -1,25 +1,28 @@
 "use client";
 
 import { useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signinSchema, signinType } from "@/lib/validators/signin";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
-import { useToast } from "../ui/use-toast";
+import { signupSchema, signupType } from "@/lib/validators/signup";
 import { Button } from "../ui/button";
+import { useToast } from "../ui/use-toast";
 import { Input } from "../ui/input";
 
 const Signin = () => {
+  const router = useRouter();
   const { toast } = useToast();
+
   const { mutate } = useMutation({
-    mutationFn: async (payload: signinType) => {
-      const { data } = await axios.post("/api/auth/signin", payload);
+    mutationFn: async (payload: signupType) => {
+      const { data } = await axios.post("/api/register", payload);
       return data;
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
-        if (err.response?.status === 401)
+        if (err.response?.status === 409)
           return toast({
             title: err.response.data,
             description: "There can only be one admin",
@@ -35,27 +38,26 @@ const Signin = () => {
     onSuccess: () => {
       toast({
         title: "Successful",
-        description: "Congrats have been loggedin successful",
+        description: "Congrats you are the admin now",
       });
       router.push("/dashboard");
     },
   });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<signinType>({
-    resolver: zodResolver(signinSchema),
+  } = useForm<signupType>({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
       email: "",
       password: "",
+      username: "",
     },
   });
-  const router = useRouter();
 
-  const submitHandler = async (data: signinType) => {
-    mutate(data);
-  };
+  const submitHandler = (data: signupType) => mutate(data);
 
   return (
     <form
@@ -63,7 +65,7 @@ const Signin = () => {
       onSubmit={handleSubmit(submitHandler)}
     >
       <h2 className="text-xl font-bold leading-6 tracking-tight text-darkest">
-        Admin signin
+        Register admin account
       </h2>
       <div>
         <label
@@ -84,6 +86,29 @@ const Signin = () => {
         {errors.email && (
           <p className=" font-semibold text-sm text-red-500 ">
             {errors.email.message}
+          </p>
+        )}
+      </div>
+
+      <div>
+        <label
+          htmlFor="username"
+          className="block text-sm font-medium leading-6 text-darkest"
+        >
+          Username
+        </label>
+        <div className="mt-2">
+          <Input
+            id="username"
+            type="text"
+            autoComplete="username"
+            className="block w-full rounded-md border-0 py-1.5 text-darkest shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-darkest sm:text-sm sm:leading-6"
+            {...register("username")}
+          />
+        </div>
+        {errors.username && (
+          <p className=" font-semibold text-sm text-red-500 ">
+            {errors.username.message}
           </p>
         )}
       </div>
@@ -118,7 +143,7 @@ const Signin = () => {
           type="submit"
           className="flex w-full justify-center rounded-md bg-brand px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-darkest"
         >
-          Sign in
+          Sign up
         </Button>
       </div>
     </form>

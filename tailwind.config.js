@@ -2,11 +2,11 @@
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -50,6 +50,14 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+
+        //Custom colors. Not from shadcn-ui
+        brand: "var(--brand)",
+        darkest: "var(--darkest)",
+        dark: "var(--dark)",
+        mid: "var(--mid)",
+        light: "var(--light)",
+        lightest: "var(--lightest)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -72,5 +80,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"),require('@tailwindcss/forms'),],
-}
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/forms")],
+};

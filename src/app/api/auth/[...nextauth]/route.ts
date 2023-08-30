@@ -36,6 +36,9 @@ const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET!,
+  pages: {
+    signIn: "/signin",
+  },
 };
 
 const handler = NextAuth(authOptions);
