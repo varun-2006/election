@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-darkest flex items-center justify-center min-h-[100dvh] w-[100dvw] overflow-x-hidden">
+      <body className="min-h-[100dvh] w-[100dvw] overflow-x-hidden">
         <Providers>
           {children}
           <Toaster />

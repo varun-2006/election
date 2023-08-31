@@ -9,11 +9,15 @@ datasource db {
 }
 
 model Election {
-  id         String      @id @default(cuid())
-  title      String
-  students   Student[]
-  teachers   Teacher[]
-  candidates Candidate[]
+  name         String        @id @unique
+  complete     Boolean
+  filters      Json
+  teachers     Teacher[]
+  candidates   Category[]
+  votes        Vote[]
+  teacherVotes TeacherVote[]
+
+  @@index([name])
 }
 
 model Account {
@@ -77,52 +81,59 @@ model Teacher {
 }
 
 model Student {
-  id        String     @id @unique @default(uuid())
-  name      String
-  house     String
-  std       String
-  section   String
-  rollNo    Int
-  candidate Candidate?
-  votes     Vote[]
-  Elections Election[]
+  id         String     @id @unique @default(uuid())
+  name       String
+  house      String
+  std        String
+  section    String
+  rollNo     Int
+  categories Category[]
+  votes      Vote[]
 
+  @@unique([std, section, rollNo])
   @@index([std, section, rollNo])
 }
 
-model Candidate {
+model Category {
   id           String        @id @unique @default(uuid())
-  student      Student       @relation(fields: [studentId], references: [id])
-  studentId    String        @unique
-  ministry     String
+  name         String
+  candidates   Student[]
   studentVotes Vote[]
   teacherVotes TeacherVote[]
   elections    Election[]
+  house        House?
 
-  @@index([ministry])
+  @@index([name])
 }
 
 model Vote {
-  id          String    @id @unique @default(uuid())
-  to          Candidate @relation(fields: [candidateId], references: [id])
-  candidateId String
-  by          Student   @relation(fields: [voterId], references: [id])
-  voterId     String
+  id           String   @id @unique @default(uuid())
+  to           Category @relation(fields: [candidateId], references: [id])
+  candidateId  String
+  by           Student  @relation(fields: [voterId], references: [id])
+  voterId      String
+  election     Election @relation(fields: [electionName], references: [name])
+  electionName String
 
-  @@unique([candidateId, voterId])
+  @@unique([candidateId, voterId, electionName])
   @@index([candidateId])
   @@index([voterId])
+  @@index([electionName])
 }
 
 model TeacherVote {
-  id          String    @id @unique @default(uuid())
-  to          Candidate @relation(fields: [candidateId], references: [id])
-  candidateId String
-  by          Teacher   @relation(fields: [voterEmail], references: [email])
-  voterEmail  String
+  id           String   @id @unique @default(uuid())
+  to           Category @relation(fields: [candidateId], references: [id])
+  candidateId  String
+  by           Teacher  @relation(fields: [voterEmail], references: [email])
+  voterEmail   String
+  election     Election @relation(fields: [electionName], references: [name])
+  electionName String
 
+  @@unique([electionName, candidateId, voterEmail])
   @@index([voterEmail])
   @@index([candidateId])
+  @@index([electionName])
 }
 
 enum House {

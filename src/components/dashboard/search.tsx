@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 
 export function Search() {
   return (
-    <div>
+    <div className="mr-2">
       <Input
         type="search"
         placeholder="Search..."
