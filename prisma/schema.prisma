@@ -84,7 +84,7 @@ model Student {
   id         String     @id @unique @default(uuid())
   name       String
   house      String
-  std        String
+  std        Int
   section    String
   rollNo     Int
   categories Category[]

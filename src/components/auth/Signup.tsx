@@ -7,15 +7,15 @@ import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { signupSchema, signupType } from "@/lib/validators/signup";
-import { Button } from "../ui/button";
-import { useToast } from "../ui/use-toast";
-import { Input } from "../ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
 
 const Signin = () => {
   const router = useRouter();
   const { toast } = useToast();
 
-  const { mutate } = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: async (payload: signupType) => {
       const { data } = await axios.post("/api/register", payload);
       return data;
@@ -76,6 +76,7 @@ const Signin = () => {
         </label>
         <div className="mt-2">
           <Input
+            disabled={isLoading}
             id="email"
             type="email"
             autoComplete="email"
@@ -99,6 +100,7 @@ const Signin = () => {
         </label>
         <div className="mt-2">
           <Input
+            disabled={isLoading}
             id="username"
             type="text"
             autoComplete="username"
@@ -124,6 +126,7 @@ const Signin = () => {
         </div>
         <div className="mt-2">
           <Input
+            disabled={isLoading}
             id="password"
             {...register("password")}
             type="password"
@@ -140,8 +143,9 @@ const Signin = () => {
 
       <div>
         <Button
+          disabled={isLoading}
           type="submit"
-          className="flex w-full justify-center rounded-md bg-brand px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-darkest"
+          className="flex w-full justify-center rounded-md bg-brand px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-ring focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-darkest"
         >
           Sign up
         </Button>

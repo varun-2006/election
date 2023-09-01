@@ -3,8 +3,8 @@ import Image from "next/image";
 
 const page = () => {
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="flex sm:mx-auto w-1/2 shadow-md shadow-black">
+    <div className="flex h-[100dvh] flex-1 flex-col justify-center items-center px-6 py-12 lg:px-8">
+      <div className="flex w-1/2 shadow-md shadow-black">
         <div className="w-1/2 relative flex rounded-l justify-center items-center bg-lightest">
           <div className="relative h-72 w-5/6 mb-5">
             <Image

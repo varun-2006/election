@@ -1,4 +1,4 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
@@ -16,19 +16,19 @@ const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password)
+          throw new Error("400");
 
         const user = await db.admin.findFirst({
           where: {
             email: credentials.email,
           },
         });
-        if (!user) return null;
+        if (!user) throw new Error("401");
 
         const verify = await compare(credentials.password, user.password);
-        if (verify)
-          return { email: user.email, username: user.username, id: user.id };
-        return null;
+        if (!verify) throw new Error("401");
+        return { email: user.email, name: user.username, id: user.id };
       },
     }),
   ],
@@ -40,6 +40,8 @@ const authOptions: NextAuthOptions = {
     signIn: "/signin",
   },
 };
+
+export const getAuthSession = () => getServerSession(authOptions);
 
 const handler = NextAuth(authOptions);
 
