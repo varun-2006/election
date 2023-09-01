@@ -18,7 +18,7 @@ const page = () => {
               className="mx-auto h-72 object-contain w-auto"
               fill
               src="/logo.png"
-              alt="Your Company"
+              alt="Cambridge"
             />
           </div>
           <h3 className="p-1 absolute bottom-6 font-semibold w-full text-lightest text-center bg-brand">

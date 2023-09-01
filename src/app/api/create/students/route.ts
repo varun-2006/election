@@ -12,9 +12,13 @@ export const POST = async (req: Request) => {
     const body = await req.json();
     const data = studentsSchema.parse(body);
 
-    await db.student.createMany({
-      data,
-    });
+    try {
+      await db.student.createMany({
+        data,
+      });
+    } catch (err) {
+      return new Response("Student data overlap", { status: 422 });
+    }
     return new Response("Student created successfully", { status: 201 });
   } catch (err) {
     if (err instanceof z.ZodError)
