@@ -10,10 +10,9 @@ datasource db {
 
 model Election {
   name         String        @id @unique
-  complete     Boolean
+  complete     Boolean       @default(false)
   filters      Json
-  teachers     Teacher[]
-  candidates   Category[]
+  category     Category[]
   votes        Vote[]
   teacherVotes TeacherVote[]
 
@@ -74,8 +73,7 @@ model Teacher {
   name     String
   password String
 
-  votes     TeacherVote[]
-  elections Election[]
+  votes TeacherVote[]
 
   @@index([email])
 }
@@ -89,6 +87,7 @@ model Student {
   rollNo     Int
   categories Category[]
   votes      Vote[]
+  image      String?
 
   @@unique([std, section, rollNo])
   @@index([std, section, rollNo])
@@ -101,7 +100,7 @@ model Category {
   studentVotes Vote[]
   teacherVotes TeacherVote[]
   elections    Election[]
-  house        House?
+  house        String?
 
   @@index([name])
 }

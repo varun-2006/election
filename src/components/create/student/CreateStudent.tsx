@@ -3,14 +3,13 @@
 import { Controller, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { studentSchema, studentType } from "@/lib/validators/student";
-import { cn } from "@/lib/utils";
+import { cn, houses } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -20,8 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const houses = ["ETON", "LEEDS", "OXFORD", "HARROW"];
+import { Label } from "@/components/ui/label";
 
 const CreateStudent = ({ className }: { className: string }) => {
   const { toast } = useToast();
@@ -81,35 +79,12 @@ const CreateStudent = ({ className }: { className: string }) => {
         Create Student
       </h2>
       <div>
-        <label
+        <Label
           htmlFor="name"
           className="block text-sm font-medium leading-6 text-darkest"
         >
-          Standard
-        </label>
-        <div className="mt-2">
-          <Input
-            disabled={isLoading}
-            id="std"
-            type="number"
-            autoComplete="std"
-            {...register("std", { valueAsNumber: true })}
-          />
-        </div>
-        {errors.std && (
-          <p className=" font-semibold text-sm text-red-500 ">
-            {errors.std.message}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <label
-          htmlFor="class"
-          className="block text-sm font-medium leading-6 text-darkest"
-        >
           Name
-        </label>
+        </Label>
         <div className="mt-2">
           <Input
             disabled={isLoading}
@@ -127,13 +102,36 @@ const CreateStudent = ({ className }: { className: string }) => {
       </div>
 
       <div>
+        <Label
+          htmlFor="std"
+          className="block text-sm font-medium leading-6 text-darkest"
+        >
+          Standard
+        </Label>
+        <div className="mt-2">
+          <Input
+            disabled={isLoading}
+            id="std"
+            type="number"
+            autoComplete="std"
+            {...register("std", { valueAsNumber: true })}
+          />
+        </div>
+        {errors.std && (
+          <p className=" font-semibold text-sm text-red-500 ">
+            {errors.std.message}
+          </p>
+        )}
+      </div>
+
+      <div>
         <div className="flex items-center justify-between">
-          <label
+          <Label
             htmlFor="section"
             className="block text-sm font-medium leading-6 text-darkest"
           >
             Section
-          </label>
+          </Label>
         </div>
         <div className="mt-2">
           <Input
@@ -153,12 +151,12 @@ const CreateStudent = ({ className }: { className: string }) => {
 
       <div>
         <div className="flex items-center justify-between">
-          <label
+          <Label
             htmlFor="rollNo"
             className="block text-sm font-medium leading-6 text-darkest"
           >
             Roll No
-          </label>
+          </Label>
         </div>
         <div className="mt-2">
           <Input
@@ -182,7 +180,7 @@ const CreateStudent = ({ className }: { className: string }) => {
           name="house"
           render={({ field }) => (
             <Select onValueChange={field.onChange} {...field}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select your House" />
               </SelectTrigger>
               <SelectContent>

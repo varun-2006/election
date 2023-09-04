@@ -7,7 +7,7 @@ export const POST = async (req: Request) => {
   try {
     const session = await getAuthSession();
     if (!session?.user?.email)
-      return new Response("Unauthorized", { status: 403 });
+      return new Response("Unauthorized", { status: 401 });
 
     const body = await req.json();
     const data = studentSchema.parse(body);

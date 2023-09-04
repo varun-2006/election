@@ -67,7 +67,7 @@ const CreateStudents = () => {
       return toast({
         title: "Corrupt data",
         description:
-          "Make sure that the data you're sending has all the required fields as in the form beside and no wrong data classes above 10 and below 1 are not allowed",
+          "Make sure that the data you're sending has all the required fields as in the form beside and no wrong data classes above 10 and below 5 are not allowed",
         variant: "destructive",
       });
     }
