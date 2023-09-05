@@ -24,7 +24,7 @@ import { ChevronRight } from "lucide-react";
 
 type omittedElectionType = Omit<electionType, "category" | "filters">;
 
-let selectedSections: string[] = [];
+let selectedSections: string[] | "ALL" = [];
 
 const FiltersNameForm = ({
   setCurrentPage,
@@ -54,20 +54,22 @@ const FiltersNameForm = ({
     e.stopPropagation();
     if (!selectedStandard) return setShowErrors(true);
     setElectionData((prev) => {
-      if (typeof prev.filters === "string")
+      if (typeof prev.filters === "string") {
         return {
           ...prev,
           filters: {
-            [selectedStandard]: selectedSections,
+            [selectedStandard]: !!selectedSections ? selectedSections : "ALL",
           },
         };
-      return {
-        ...prev,
-        filters: {
-          ...prev.filters,
-          [selectedStandard]: selectedSections,
-        },
-      };
+      } else {
+        return {
+          ...prev,
+          filters: {
+            ...prev.filters,
+            [selectedStandard]: !!selectedSections ? selectedSections : "ALL",
+          },
+        };
+      }
     });
     toast({
       title: `Students of class ${selectedStandard} ${selectedSections} added`,
@@ -148,12 +150,17 @@ const FiltersNameForm = ({
                 >
                   <Checkbox
                     onCheckedChange={(checked: boolean) => {
-                      checked
-                        ? selectedSections.push(section)
-                        : selectedSections.splice(
+                      if (checked) {
+                        if (typeof selectedSections === "string")
+                          return (selectedSections = [section]);
+                        selectedSections.push(section);
+                      } else {
+                        if (typeof selectedSections !== "string")
+                          selectedSections.splice(
                             selectedSections.indexOf(section),
                             1
                           );
+                      }
                     }}
                   />
                   <Label className="font-normal">{section}</Label>

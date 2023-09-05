@@ -97,7 +97,6 @@ const FindCandidatesForm = ({
   const { electionData } = useElection();
 
   useEffect(() => {
-    console.log(electionData);
     if (!!candidate1 && !!candidate2) mutate([candidate1, candidate2]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [candidate1, candidate2]);

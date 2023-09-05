@@ -1,7 +1,11 @@
 import { z } from "zod";
 import { houses, sections } from "../utils";
 
-const sectionsSchema = z.array(z.enum(sections)).or(z.string()).default("ALL");
+const sectionsSchema = z
+  .array(z.enum(sections))
+  .or(z.string())
+  .default("ALL")
+  .optional();
 
 export const categorySchema = z.object({
   house: z.enum(houses).optional(),

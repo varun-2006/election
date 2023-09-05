@@ -1,12 +1,16 @@
-import { toast } from "@/components/ui/use-toast";
 import { electionType } from "@/lib/validators/election";
-import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
-import { ReactNode, createContext, useContext, useState } from "react";
+import {
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useContext,
+  useState,
+  Dispatch,
+} from "react";
 
 type ElectionContextType = {
   electionData: electionType;
-  setElectionData: React.Dispatch<React.SetStateAction<electionType>>;
+  setElectionData: Dispatch<SetStateAction<electionType>>;
 };
 
 const ElectionContext = createContext<ElectionContextType>({
@@ -26,10 +30,6 @@ const ElectionContext = createContext<ElectionContextType>({
 
 const useElection = (): ElectionContextType => {
   const context = useContext(ElectionContext);
-
-  if (!context) {
-    throw new Error();
-  }
 
   return context;
 };

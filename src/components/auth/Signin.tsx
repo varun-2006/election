@@ -4,14 +4,18 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signinSchema, signinType } from "@/lib/validators/signin";
 import { useRouter } from "next/navigation";
-import { useToast } from "../ui/use-toast";
+import { toast } from "../ui/use-toast";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 
-const Signin = () => {
-  const { toast } = useToast();
+type SigninProps = {
+  title: string;
+  credName: string;
+};
+
+const Signin = ({ title, credName }: SigninProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -28,19 +32,19 @@ const Signin = () => {
   const router = useRouter();
 
   const submitHandler = async (data: signinType) => {
-    const something = await signIn("credentials", {
+    const nextauthSignin = await signIn(credName, {
       redirect: false,
       ...data,
     });
     setIsLoading(false);
-    if (something?.error) {
-      if (something.error === "400")
+    if (nextauthSignin?.error) {
+      if (nextauthSignin.error === "400")
         return toast({
           title: "Bad request",
           description: "Format of data is wrong",
           variant: "destructive",
         });
-      else if (something.error === "401")
+      else if (nextauthSignin.error === "401")
         return toast({
           title: "Wrong credentials",
           description:
@@ -70,7 +74,7 @@ const Signin = () => {
       })}
     >
       <h2 className="text-xl font-bold leading-6 tracking-tight text-darkest">
-        Admin signin
+        {title}
       </h2>
       <div>
         <label

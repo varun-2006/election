@@ -4,37 +4,29 @@ import SectionSelect from "@/components/SectionSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
-import { cn, sections } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import {
   searchStudentSchema,
   searchStudentType,
 } from "@/lib/validators/searchStudent";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { Dispatch, SetStateAction } from "react";
+import { useForm } from "react-hook-form";
 
 type SearchCandidatesFormProps = {
-  setCandidate: React.Dispatch<
-    React.SetStateAction<searchStudentType | undefined>
-  >;
+  setCandidate: Dispatch<SetStateAction<searchStudentType | undefined>>;
   title: string;
   candidate: searchStudentType | undefined;
   className?: string;
+  setIsLoading?: Dispatch<SetStateAction<boolean>>;
 };
 
 const SearchCandidatesForm = ({
   setCandidate,
   title,
   candidate,
+  setIsLoading,
   className = "",
 }: SearchCandidatesFormProps) => {
   const {
@@ -48,14 +40,19 @@ const SearchCandidatesForm = ({
   });
 
   const submitHandler = (data: searchStudentType) => {
-    toast({
-      title: `${title} added`,
-    });
     setCandidate(data);
+    if (!setIsLoading)
+      return toast({
+        title: `${title} added`,
+      });
+    setIsLoading(true);
   };
 
   return (
-    <form onSubmit={handleSubmit(submitHandler)} className={cn("", className)}>
+    <form
+      onSubmit={handleSubmit(submitHandler)}
+      className={cn("text-left", className)}
+    >
       <h3 className="font-bold text-xl">{title}</h3>
       <div className="my-6">
         <Label htmlFor="std" className="block text-sm font-medium leading-6">
@@ -99,7 +96,7 @@ const SearchCandidatesForm = ({
         )}
       </div>
       <Button>Add {candidate ? "new details" : title}</Button>
-      {candidate && (
+      {candidate && !setIsLoading && (
         <p>
           {title} has been added. If you want any changes just make it and click
           the above button

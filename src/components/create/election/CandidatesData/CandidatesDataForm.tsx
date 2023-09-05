@@ -22,8 +22,6 @@ import {
 import Loading from "@/app/loading";
 import { useRouter } from "next/navigation";
 
-type candidateData = Pick<categoryType, "candidates">;
-
 const CandidatesDataForm = ({
   setCurrentPage,
   candidates,
@@ -58,7 +56,7 @@ const CandidatesDataForm = ({
         title: "Successful",
         description: "Election is created successfully",
       });
-      router.push("/dashboard");
+      router.push(`/dashboard/${electionData.name}`);
     },
   });
   const [candidate1Image, setCandidate1Image] = useState<string | undefined>(
