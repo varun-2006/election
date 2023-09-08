@@ -8,6 +8,7 @@ const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   providers: [
     CredentialsProvider({
+      id: "admin",
       name: "credentials",
       credentials: {
         password: { label: "Password", type: "password" },
@@ -84,7 +85,6 @@ const authOptions: NextAuthOptions = {
         const verify = await compare(credentials.password, user.password);
         if (!verify) throw new Error("401");
         return {
-          email: user.email,
           name: user.name,
           id: user.email,
           admin: false,
@@ -92,13 +92,48 @@ const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  callbacks: {
+    async session({ session, token }) {
+      session.user = token;
+      return session;
+    },
+    async jwt({ user, account, token, session }) {
+      if (user) {
+        if (account?.provider === "students")
+          token = {
+            id: user.id,
+            // @ts-ignore
+            house: user.house,
+            // @ts-ignore
+            std: user.std,
+            // @ts-ignore
+            section: user.section,
+            isAdmin: false,
+          };
+        else if (account?.provider === "teacher")
+          token = {
+            email: user.email,
+            name: user.name,
+            isAdmin: false,
+          };
+        else
+          token = {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            isAdmin: true,
+          };
+      }
+      return token;
+    },
+  },
   session: {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET!,
-  pages: {
-    signIn: "/signin",
-  },
+  // pages: {
+  //   // signIn: "/signin",
+  // },
 };
 
 export const getAuthSession = () => getServerSession(authOptions);

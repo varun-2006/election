@@ -19,11 +19,7 @@ const page = () => {
           </h3>
         </div>
 
-        <Signin
-          title="Admin login"
-          credName="admin"
-          redirectTo={"/dashboard"}
-        />
+        <Signin title="Login" credName="teacher" redirectTo="/" />
       </div>
     </div>
   );

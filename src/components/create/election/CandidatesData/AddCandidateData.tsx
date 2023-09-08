@@ -4,43 +4,68 @@ import "@uploadthing/react/styles.css";
 import { toast } from "@/components/ui/use-toast";
 import { UploadDropzone } from "@/lib/uploadhing";
 import { Student } from "@prisma/client";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { SetStateAction, Dispatch } from "react";
-import useElection from "../ElectionContext";
+import useCategory from "../CategoryContext";
+import Image from "next/image";
 
 type AddCandidateData = {
+  candidateImage: string | undefined;
   candidate: Student;
   setCandidateImage: Dispatch<SetStateAction<string | undefined>>;
 };
 
 const AddCandidateData = ({
   candidate,
+  candidateImage,
   setCandidateImage,
 }: AddCandidateData) => {
-  const { electionData } = useElection();
+  const { category } = useCategory();
 
   return (
     <div className="py-3">
-      <UploadDropzone
-        appearance={{
-          label: buttonVariants({ variant: "link", className: "my-1" }),
-        }}
-        endpoint="imageUploader"
-        onClientUploadComplete={(res) => {
-          console.log(electionData);
-          setCandidateImage(res?.toString());
-          toast({
-            title: "Image uploaded successfully",
-          });
-        }}
-        onUploadError={(err: Error) => {
-          toast({
-            title: "Could not upload image",
-            description: err.message,
-            variant: "destructive",
-          });
-        }}
-      />
+      {!candidateImage ? (
+        <UploadDropzone
+          appearance={{
+            label: buttonVariants({ variant: "link", className: "my-1" }),
+          }}
+          endpoint="imageUploader"
+          onClientUploadComplete={(res) => {
+            console.log(candidateImage, res);
+            if (res) {
+              setCandidateImage(res[0].url);
+              toast({
+                title: "Image uploaded successfully",
+              });
+            }
+          }}
+          onUploadError={(err: Error) => {
+            toast({
+              title: "Could not upload image",
+              description: "Something went wrong! Try again",
+              variant: "destructive",
+            });
+          }}
+        />
+      ) : (
+        <>
+          <Image
+            src={candidateImage}
+            className="w-auto h-40"
+            height={16}
+            width={10}
+            alt={`${candidate.name} image`}
+          />
+          <Button
+            className="my-2"
+            variant="default"
+            onClick={() => setCandidateImage(undefined)}
+          >
+            Cancel image
+          </Button>
+        </>
+      )}
+
       <h2>{candidate.name}</h2>
       <h2>{`${candidate.std} ${candidate.section}`}</h2>
     </div>

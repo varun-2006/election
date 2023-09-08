@@ -106,7 +106,7 @@ const CreateStudent = ({ className }: { className: string }) => {
           htmlFor="std"
           className="block text-sm font-medium leading-6 text-darkest"
         >
-          Standard
+          Std
         </Label>
         <div className="mt-2">
           <Input

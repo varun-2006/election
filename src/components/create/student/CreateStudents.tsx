@@ -7,6 +7,7 @@ import { studentsSchema, studentsType } from "@/lib/validators/students";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { ZodError } from "zod";
 
 const CreateStudents = () => {
   const [message, setMessage] = useState("");
@@ -64,6 +65,20 @@ const CreateStudents = () => {
     try {
       students = studentsSchema.parse(data);
     } catch (err) {
+      if (err instanceof ZodError) {
+        console.log(err.issues);
+        if (err.issues[0].code === "invalid_type")
+          return toast({
+            title: err.issues[0].message,
+            description: `${err.issues[0].code}: Expected ${err.issues[0].expected} received ${err.issues[0].received}. Property:${err.issues[0].path[1]}`,
+            variant: "destructive",
+          });
+        return toast({
+          title: err.issues[0].message,
+          description: `${err.issues[0].code}: ${err.issues[0].path}`,
+          variant: "destructive",
+        });
+      }
       return toast({
         title: "Corrupt data",
         description:

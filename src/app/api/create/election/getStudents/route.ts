@@ -30,8 +30,12 @@ export const POST = async (req: Request) => {
       },
     });
 
+    if (students.length === 0)
+      return new Response("No candidates found", { status: 422 });
+
     return NextResponse.json(students);
   } catch (err) {
+    console.log(err)
     if (err instanceof z.ZodError)
       return new Response("Bad data", {
         status: 400,

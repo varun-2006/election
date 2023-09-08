@@ -18,6 +18,7 @@ export const categorySchema = z.object({
       })
     )
     .length(2),
+  electionId: z.string(),
 });
 
 export const electionSchema = z.object({
@@ -34,7 +35,6 @@ export const electionSchema = z.object({
     })
     .or(z.string())
     .default("ALL"),
-  category: z.array(categorySchema),
 });
 
 export type electionType = z.infer<typeof electionSchema>;

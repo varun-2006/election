@@ -7,8 +7,6 @@ import { useMutation } from "@tanstack/react-query";
 import { searchStudentType } from "@/lib/validators/searchStudent";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Loading from "@/app/loading";
-import useElection from "../ElectionContext";
-import { Button } from "@/components/ui/button";
 import { Student } from "@prisma/client";
 
 const FindCandidatesForm = ({
@@ -31,6 +29,7 @@ const FindCandidatesForm = ({
       return data;
     },
     onError: (err) => {
+      console.log(err);
       setCandidate1(undefined);
       setCandidate2(undefined);
       if (err instanceof AxiosError) {
@@ -39,6 +38,13 @@ const FindCandidatesForm = ({
             title: err.response?.data,
             description:
               "The format of the data was corrupt. Make sure you follow the pattern recommended",
+            variant: "destructive",
+          });
+        else if (err.response?.status === 422)
+          return toast({
+            title: err.response?.data,
+            description:
+              "Enter the correct details of candidates or create a new students with that details and reference it",
             variant: "destructive",
           });
       }
@@ -88,13 +94,12 @@ const FindCandidatesForm = ({
       if (valueOfAboveFunction) setCandidates(data);
       else setCandidates([{ ...data[1] }, { ...data[0] }]);
 
-      setCurrentPage(4);
+      setCurrentPage(3);
       toast({
         title: "Candidates added successfully",
       });
     },
   });
-  const { electionData } = useElection();
 
   useEffect(() => {
     if (!!candidate1 && !!candidate2) mutate([candidate1, candidate2]);
@@ -121,12 +126,7 @@ const FindCandidatesForm = ({
           </>
         )}
       </div>
-      {candidates.length > 1 && (
-        <Button type="button" onClick={() => setCurrentPage(4)}>
-          Next: Add candidates
-        </Button>
-      )}
-      {candidates.length < 1 && !isLoading && (
+      {!isLoading && (
         <p className="font-medium text-base mt-2">
           Note: If any data you have provided is wrong you can change it in the
           next step or now by changing and adding the cadidate data

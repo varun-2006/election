@@ -17,10 +17,10 @@ import {
 import { houses } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
-import useElection from "../ElectionContext";
 import { ChevronRight } from "lucide-react";
+import useCategory from "../CategoryContext";
 
-type HouseNameFormType = Omit<categoryType, "candidates">;
+type HouseNameFormType = Omit<categoryType, "candidates" | "electionId">;
 
 const HouseNameForm = ({
   setCurrentPage,
@@ -33,30 +33,28 @@ const HouseNameForm = ({
     control,
     formState: { errors },
   } = useForm<HouseNameFormType>({
-    resolver: zodResolver(categorySchema.omit({ candidates: true })),
+    resolver: zodResolver(
+      categorySchema.omit({ candidates: true, electionId: true })
+    ),
   });
-  const { setElectionData } = useElection();
+  const { setCategory } = useCategory();
 
   const submitHandler = (data: HouseNameFormType) => {
-    setElectionData((prev) => {
-      if (prev.category[0].name.length === 0)
-        return {
-          ...prev,
-          category: [{ ...data, candidates: [] }],
-        };
-      return {
-        ...prev,
-        category: [...prev.category, { ...data, candidates: [] }],
-      };
-    });
-    setCurrentPage(3);
+    console.log(data);
+    setCategory((prev) => ({
+      ...prev,
+      ...data,
+    }));
+    setCurrentPage(2);
   };
   return (
     <form
       onSubmit={handleSubmit(submitHandler)}
       className="border-border border rounded py-6 px-4"
     >
-      <h2 className="text-lg mx-auto font-bold mb-3">Create Election</h2>
+      <h2 className="text-lg mx-auto font-bold mb-3">
+        Create Category/Ministry
+      </h2>
       <div>
         <Label htmlFor="name" className="block text-sm font-medium leading-6">
           Name of ministry
@@ -109,8 +107,8 @@ const HouseNameForm = ({
           Note: If northing is selected then anyone of any house can vote
         </p>
       </div>
-      <Button>
-        Next step: Add candidates <ChevronRight className="h-6 w-6" />
+      <Button type="submit">
+        Next step: Find candidates <ChevronRight className="h-6 w-6" />
       </Button>
     </form>
   );

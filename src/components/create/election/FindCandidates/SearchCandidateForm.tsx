@@ -95,7 +95,17 @@ const SearchCandidatesForm = ({
           </p>
         )}
       </div>
-      <Button>Add {candidate ? "new details" : title}</Button>
+      {setIsLoading ? (
+        <Button
+          type="submit"
+          disabled={!!candidate}
+          className="flex w-full justify-center rounded-md bg-brand px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-ring focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-darkest"
+        >
+          Sign in
+        </Button>
+      ) : (
+        <Button>Add {candidate ? "new details" : title}</Button>
+      )}
       {candidate && !setIsLoading && (
         <p>
           {title} has been added. If you want any changes just make it and click

@@ -13,9 +13,10 @@ import { useState } from "react";
 type SigninProps = {
   title: string;
   credName: string;
+  redirectTo: string;
 };
 
-const Signin = ({ title, credName }: SigninProps) => {
+const Signin = ({ title, credName, redirectTo }: SigninProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -62,34 +63,30 @@ const Signin = ({ title, credName }: SigninProps) => {
       description: "Congrats have been loggedin successful",
     });
 
-    router.push("/dashboard");
+    router.push(redirectTo);
   };
 
   return (
     <form
-      className="space-y-6 rounded-r bg-mid p-6 w-1/2"
+      className="space-y-6 rounded-r border border-border p-6 w-1/2"
       onSubmit={handleSubmit((data) => {
         setIsLoading(true);
         submitHandler(data);
       })}
     >
-      <h2 className="text-xl font-bold leading-6 tracking-tight text-darkest">
-        {title}
-      </h2>
+      <h2 className="text-xl font-bold leading-6 tracking-tight">{title}</h2>
       <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium leading-6 text-darkest"
-        >
+        <label htmlFor="email" className="block text-sm font-medium leading-6">
           Email address
         </label>
         <div className="mt-2">
           <Input
             disabled={isLoading}
+            placeholder="Eg: varun1492006@gmail.com"
             id="email"
             type="email"
             autoComplete="email"
-            className="block w-full rounded-md border-0 py-1.5 text-darkest shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-darkest sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-darkest sm:text-sm sm:leading-6"
             {...register("email")}
           />
         </div>
@@ -104,7 +101,7 @@ const Signin = ({ title, credName }: SigninProps) => {
         <div className="flex items-center justify-between">
           <label
             htmlFor="password"
-            className="block text-sm font-medium leading-6 text-darkest"
+            className="block text-sm font-medium leading-6"
           >
             Password
           </label>
@@ -115,7 +112,7 @@ const Signin = ({ title, credName }: SigninProps) => {
             {...register("password")}
             type="password"
             autoComplete="current-password"
-            className="block w-full rounded-md border-0 py-1.5 text-darkest shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-darkest sm:text-sm sm:leading-6"
+            className="block w-full rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-darkest sm:text-sm sm:leading-6"
             disabled={isLoading}
           />
         </div>

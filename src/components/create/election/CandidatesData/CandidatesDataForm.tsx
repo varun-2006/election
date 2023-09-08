@@ -1,12 +1,11 @@
 "use client";
 
-import { categoryType, electionType } from "@/lib/validators/election";
+import { categoryType } from "@/lib/validators/election";
 import { Dispatch, SetStateAction, useState } from "react";
 import AddCandidateData from "./AddCandidateData";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { Student } from "@prisma/client";
-import useElection from "../ElectionContext";
 import { toast } from "@/components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
@@ -21,18 +20,22 @@ import {
 } from "@/components/ui/dialog";
 import Loading from "@/app/loading";
 import { useRouter } from "next/navigation";
+import useCategory from "../CategoryContext";
 
 const CandidatesDataForm = ({
   setCurrentPage,
   candidates,
+  id,
 }: {
+  id: string;
   setCurrentPage: Dispatch<SetStateAction<number>>;
   candidates: Student[] | [];
 }) => {
-  const router = useRouter();
+  console.log(candidates);
   const { mutate, isLoading } = useMutation({
-    mutationFn: async (payload: electionType) => {
-      const { data } = await axios.post("/api/create/election", payload);
+    mutationFn: async (payload: categoryType) => {
+      console.log(payload);
+      const { data } = await axios.post("/api/create/category", payload);
       return data;
     },
     onError: (err) => {
@@ -54,9 +57,10 @@ const CandidatesDataForm = ({
     onSuccess: () => {
       toast({
         title: "Successful",
-        description: "Election is created successfully",
+        description: `Category created successfully`,
       });
-      router.push(`/dashboard/${electionData.name}`);
+      // router.push(`/dashboard/${category.name}`);
+      setCurrentPage(1);
     },
   });
   const [candidate1Image, setCandidate1Image] = useState<string | undefined>(
@@ -65,27 +69,30 @@ const CandidatesDataForm = ({
   const [candidate2Image, setCandidate2Image] = useState<string | undefined>(
     undefined
   );
-  const { setElectionData, electionData } = useElection();
-  const setElection = () => {
-    setElectionData((prev) => {
-      const lastCategory = prev.category[prev.category.length - 1];
-      prev.category.splice(prev.category.length - 1, 1);
+  const { category, setCategory } = useCategory();
 
-      lastCategory.candidates[0] = {
-        id: candidates[0].id,
-        //@ts-expect-error
-        image: candidate1Image,
-      };
-      lastCategory.candidates[1] = {
-        id: candidates[1].id,
-        //@ts-expect-error
-        image: candidate2Image,
-      };
-      return {
-        ...prev,
-        category: [...prev.category, { ...lastCategory }],
-      };
-    });
+  const addCandidates = () => {
+    if (!(candidate1Image && candidate2Image))
+      return toast({
+        title: "Images not added",
+        description:
+          "Add the images of the candidates to submit. Images are not optional",
+        variant: "destructive",
+      });
+    setCategory((prev) => ({
+      ...prev,
+      electionId: id,
+      candidates: [
+        {
+          id: candidates[0].id,
+          image: candidate1Image,
+        },
+        {
+          id: candidates[1].id,
+          image: candidate2Image,
+        },
+      ],
+    }));
   };
   return (
     <div className="max-w-fit text-center">
@@ -93,81 +100,76 @@ const CandidatesDataForm = ({
         <>
           <h2 className="font-bold text-lg">Upload Image</h2>
           <div className="flex justify-between items-center border-border my-4 rounded border-2 w-full">
-            <AddCandidateData
-              candidate={candidates[0]}
-              setCandidateImage={setCandidate1Image}
-            />
-            <AddCandidateData
-              candidate={candidates[1]}
-              setCandidateImage={setCandidate2Image}
-            />
+            {candidates[0].image ? (
+              <p>The image of the student already exists</p>
+            ) : (
+              <AddCandidateData
+                candidateImage={candidate1Image}
+                candidate={candidates[0]}
+                setCandidateImage={setCandidate1Image}
+              />
+            )}
+
+            {candidates[1].image ? (
+              <p>The image of the student already exists</p>
+            ) : (
+              <AddCandidateData
+                candidateImage={candidate2Image}
+                candidate={candidates[1]}
+                setCandidateImage={setCandidate2Image}
+              />
+            )}
           </div>
           <div className="flex justify-around items-center w-full">
             <Button
               type="button"
               className="w-52"
               variant="outline"
-              onClick={() => setCurrentPage(3)}
+              onClick={() => setCurrentPage(2)}
             >
               <ChevronLeft className="h-6 w-6" />
               Change candidates
             </Button>
-            <Button
-              type="button"
-              className="w-52"
-              onClick={() => {
-                if (!candidate1Image && !candidate2Image)
-                  return toast({
-                    title:
-                      "To add more candidates add images for the current ministry/category first",
-                    variant: "destructive",
-                  });
-                setElection();
-
-                setCurrentPage(2);
-              }}
-            >
-              Add Ministry/Category
-            </Button>
+            <Dialog>
+              <DialogTrigger
+                type="button"
+                className={buttonVariants({
+                  variant: "default",
+                  className: "w-52",
+                })}
+                onClick={() => {
+                  if (!candidate1Image && !candidate2Image)
+                    return toast({
+                      title:
+                        "To add more candidates add images for the current ministry first",
+                      variant: "destructive",
+                    });
+                }}
+              >
+                Add Ministry/Category
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Are you sure absolutely sure?</DialogTitle>
+                  <DialogDescription>
+                    This action cannot be undone. This will create the category
+                    and all the students you have selected can vote.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      addCandidates();
+                      mutate(category);
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
-          <Dialog>
-            <DialogTrigger
-              onClick={() => {
-                if (!candidate1Image && !candidate2Image) {
-                  return toast({
-                    title: "To submit add images first",
-                    variant: "destructive",
-                  });
-                }
-              }}
-              className={buttonVariants({
-                variant: "default",
-                className: "mt-3",
-              })}
-            >
-              Submit and finish creating the election
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Are you sure absolutely sure?</DialogTitle>
-                <DialogDescription>
-                  This action cannot be undone. This will create the election
-                  and all the students you have selected can vote.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button
-                  type="button"
-                  onClick={() => {
-                    setElection();
-                    mutate(electionData);
-                  }}
-                >
-                  Confirm
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
         </>
       ) : (
         <Loading />
