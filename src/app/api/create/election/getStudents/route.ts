@@ -7,7 +7,7 @@ import z from "zod";
 export const POST = async (req: Request) => {
   try {
     const session = await getAuthSession();
-    if (!session?.user?.email)
+    if (!session?.user?.isAdmin)
       return new Response("Unauthorized", { status: 401 });
 
     const body = await req.json();
@@ -35,7 +35,7 @@ export const POST = async (req: Request) => {
 
     return NextResponse.json(students);
   } catch (err) {
-    console.log(err)
+    console.log(err);
     if (err instanceof z.ZodError)
       return new Response("Bad data", {
         status: 400,

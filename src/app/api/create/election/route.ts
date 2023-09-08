@@ -7,7 +7,7 @@ import { nanoid } from "nanoid";
 export const POST = async (req: Request) => {
   try {
     const session = await getAuthSession();
-    if (!session?.user?.email)
+    if (!session?.user?.isAdmin)
       return new Response("Unauthorized", { status: 401 });
 
     const body = await req.json();

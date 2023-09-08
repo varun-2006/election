@@ -6,7 +6,6 @@ import { db } from "@/lib/db";
 export const POST = async (req: Request) => {
   try {
     const session = await getAuthSession();
-    // @ts-ignore
     if (!session?.user?.isAdmin)
       return new Response("Unauthorized", { status: 401 });
 
@@ -15,7 +14,7 @@ export const POST = async (req: Request) => {
     const category = { ...data, candidates: undefined };
     const candidates = data.candidates;
 
-    const dataa = await db.category.create({
+    await db.category.create({
       data: {
         ...category,
         candidates: {

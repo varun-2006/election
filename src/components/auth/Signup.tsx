@@ -53,7 +53,7 @@ const Signin = () => {
     defaultValues: {
       email: "",
       password: "",
-      username: "",
+      name: "",
     },
   });
 
@@ -93,7 +93,7 @@ const Signin = () => {
 
       <div>
         <label
-          htmlFor="username"
+          htmlFor="name"
           className="block text-sm font-medium leading-6 text-darkest"
         >
           Username
@@ -101,16 +101,16 @@ const Signin = () => {
         <div className="mt-2">
           <Input
             disabled={isLoading}
-            id="username"
+            id="name"
             type="text"
-            autoComplete="username"
+            autoComplete="name"
             className="block w-full rounded-md border-0 py-1.5 text-darkest shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-darkest sm:text-sm sm:leading-6"
-            {...register("username")}
+            {...register("name")}
           />
         </div>
-        {errors.username && (
+        {errors.name && (
           <p className=" font-semibold text-sm text-red-500 ">
-            {errors.username.message}
+            {errors.name.message}
           </p>
         )}
       </div>

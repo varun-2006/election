@@ -80,7 +80,6 @@ const FiltersNameForm = () => {
   });
 
   const submitHandler = (data: electionType) => {
-    console.log(data, electionData);
     mutate({ ...electionData, name: data.name });
   };
 
@@ -126,7 +125,7 @@ const FiltersNameForm = () => {
                 htmlFor="name"
                 className="block text-sm font-medium leading-6"
               >
-                Name of election(It must be unique for all elections)
+                Name of election
               </Label>
               <div className="mt-2">
                 <Input

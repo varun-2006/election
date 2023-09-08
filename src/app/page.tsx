@@ -8,7 +8,6 @@ import Link from "next/link";
 export default async function Home() {
   const session = await getAuthSession();
   console.log(session?.user);
-  // @ts-ignore
   if (!session?.user) redirect("/student/signin");
   let canVoteElections;
   try {
