@@ -32,7 +32,7 @@ const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.username,
           id: user.id,
-          admin: true,
+          isAdmin: true,
         };
       },
     }),
@@ -60,7 +60,7 @@ const authOptions: NextAuthOptions = {
           },
         });
         if (!user) throw new Error("401");
-        return { ...user, admin: false };
+        return { ...user, isAdmin: false };
       },
     }),
     CredentialsProvider({
@@ -87,7 +87,7 @@ const authOptions: NextAuthOptions = {
         return {
           name: user.name,
           id: user.email,
-          admin: false,
+          isAdmin: false,
         };
       },
     }),
@@ -97,18 +97,16 @@ const authOptions: NextAuthOptions = {
       session.user = token;
       return session;
     },
-    async jwt({ user, account, token, session }) {
+    async jwt({ user, account, token }) {
       if (user) {
         if (account?.provider === "students")
           token = {
             id: user.id,
-            // @ts-ignore
             house: user.house,
-            // @ts-ignore
             std: user.std,
-            // @ts-ignore
             section: user.section,
             isAdmin: false,
+            name: user.name,
           };
         else if (account?.provider === "teacher")
           token = {
