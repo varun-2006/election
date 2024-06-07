@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Election {
+  id           String        @id @unique @default(cuid())
+  name         String
+  complete     Boolean       @default(false)
+  filters      Json
+  category     Category[]
+  votes        Vote[]
+  teacherVotes TeacherVote[]
+
+  @@index([name])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user Admin @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         Admin    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Admin {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  password      String
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Teacher {
+  email    String @id @unique
+  name     String
+  password String
+
+  votes TeacherVote[]
+
+  @@index([email])
+}
+
+model Student {
+  id           String        @id @unique @default(cuid())
+  name         String
+  house        String
+  std          Int
+  section      String
+  rollNo       Int
+  categories   Category[]
+  votes        Vote[]
+  teacherVotes TeacherVote[]
+  image        String?
+
+  @@unique([std, section, rollNo])
+  @@index([std, section, rollNo])
+  @@index([id])
+}
+
+model Category {
+  id           String    @id @unique @default(cuid())
+  name         String
+  candidates   Student[]
+  studentVotes Vote[]
+  election     Election  @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  electionId   String
+  house        String?
+
+  @@index([name])
+  @@index([electionId])
+}
+
+model Vote {
+  id          String   @id @unique @default(cuid())
+  to          Category @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  candidateId String
+  by          Student  @relation(fields: [voterId], references: [id], onDelete: Cascade)
+  voterId     String
+  election    Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  electionId  String
+
+  @@unique([candidateId, voterId, electionId])
+  @@index([candidateId])
+  @@index([voterId])
+  @@index([electionId])
+}
+
+model TeacherVote {
+  id          String   @id @unique @default(cuid())
+  to          Student  @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  candidateId String
+  by          Teacher  @relation(fields: [voterEmail], references: [email], onDelete: Cascade)
+  voterEmail  String
+  election    Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  electionId  String
+
+  @@unique([electionId, candidateId, voterEmail])
+  @@index([voterEmail])
+  @@index([candidateId])
+  @@index([electionId])
+}
+
+enum House {
+  ETON
+  OXFORD
+  LEEDS
+  HARROW
+}

@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dfdfdf;
+  border-radius: 8px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+@layer base {
+  :root {
+    --background: 222 47% 11%;
+    --foreground: 0 0% 95%;
+    --card: 222 47% 11%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 95%;
+    --popover-foreground: 0 0% 9%;
+    --primary: 142.1 70.6% 45.3%;
+    --primary-foreground: 0 85.7% 97.3%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 142.4 71.8% 29.2%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+    --border: 240 5% 64.9%;
+    --input: 240 5% 64.9%;
+    --ring: 142.4 71.8% 29.2%;
+    --radius: 0.5rem;
+
+    /* Custom colors. Not from shadcn-ui  */
+    --brand: #275c3c;
+    --darkest: #0f172a;
+    --dark: #27375e;
+    --mid: #abb8c9;
+    --light: #e1e6eb;
+    --lightest: #ffffff;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
